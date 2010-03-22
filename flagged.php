@@ -100,6 +100,7 @@ $catname = 'Kategorie' ;
 //print $exclude[1];
 //$exclude = array( "Dendrologe", "Botaniker", "Forstwissenschaftler" );
 
+print '<html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></head>' ;
 if ($category == '') {
         $t1 = 'Zeigt Artikel in (Unter)kategorien, die nachgesichtet werden müssen.' ; 
         $t2 = 'Sprache' ;
@@ -109,7 +110,6 @@ if ($category == '') {
         $t5= 'Sortiere nach' ;
         $t9 = 'Los!' ;
 
-    print '<html><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"></head>' ;
     print "<body>
     <h1>Flagged Revisions Tool</h1>
     <i>$t1</i><br/>
@@ -295,5 +295,6 @@ $out .= "</a> " ;
 
 print "</script>$out" ;
 
+print '</html>' ;
 
 ?>
