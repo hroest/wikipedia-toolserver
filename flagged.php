@@ -214,8 +214,7 @@ else if ($sortby == 'category') {;}
 $printlist = '';
 $taburls = array () ;
 foreach ($output AS $page) {
-    $t =  mydecode ( $page['title'] );
-    //$t =  str_replace ( "_" , " " , $page['title'] );
+    $t =  str_replace ( "_" , " " , $page['title'] );
     $old_id = $page['stable_id'];
     $url = get_wikipedia_url ( $language , $t ) . 
         "&diffonly=$diff_only&oldid=$old_id&diff=cur" ;
