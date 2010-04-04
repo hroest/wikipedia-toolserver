@@ -22,6 +22,8 @@ function get_fr( $language, $user ) {
     $res = mysql_db_query ( $db , $sql , $mysql_con ) ;
 
 }
+
+//this will get all unreviewed pages that are in a given category
 function db_get_unreviewed( $language, $category, $fast = 99) {
     //global $mysql_con;
     if ( !isset ( $mysql_con ) ) {$mysql_con = set_up_db($language);}
@@ -176,12 +178,14 @@ if ($fast == 1) {
 //We get the categories we need
 $starttime = microtime(true); 
 
+//get all articles in category with ns == 14 (category ns)
 $data = db_get_articles_in_category ( $language , $category , $depth-1 , 14 , 
     $exclude ) ;
 
 if ( count ( $data ) == 0 ) {
     $category = utf8_encode ( $category ) ;
-    $data = db_get_articles_in_category ( $language , $category , $depth-1 , 14 ) ;
+    $data = db_get_articles_in_category( $language , $category , $depth-1 , 14 ,
+    $exclude ) ;
 }
 //now also add the root category itself
 if ( !isset ( $data[$category] ) ) array_unshift ( $data , $category ) ;

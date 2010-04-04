@@ -86,7 +86,6 @@ def main_table(year, month):
         i += 1
 
     print "</table>"
-    print today
 
 class Userdata:
     def __init__(self, year=-1, month_str='-1',rank=-1,flagged=-1):
@@ -107,8 +106,8 @@ class Userdata:
 def main_plot(user_id, start_y, stop_y, start_m, stop_m, 
              rank=False , lines = False, yrange = -1):
 
-    print "Nachsichtungsgraph fuer User %s" % user_id
-    print '<br/>' * 2
+    print "<p>Nachsichtungsgraph fuer User %s</p>" % user_id
+    print '<!--'
     print 'Rohdaten (Monat, Rang, Sichtungen):'
 
     ##this doesnt work for some reason
@@ -136,11 +135,12 @@ def main_plot(user_id, start_y, stop_y, start_m, stop_m,
         if year == stop_y: stopping = stop_m
         for i in range(starting,stopping+1):
             month = "%02d" % int( i )
-            print '<br/>', year, ' ', month, " "
             result =  test( year, month , user_id)
-            print result
+            print year, ' ', month, " ", result
             u =  Userdata(year, month, result[0], result[1])
             data.append( u  )
+
+    print '-->'
 
     #print data
     import csv
@@ -245,6 +245,7 @@ form = cgi.FieldStorage()   # FieldStorage object to
 print "<title>Nachsichten Statistik</title>"
 print "<h1>Nachsichten nach User</h1>"
 
+
 myform = """
 <FORM action="nachsichten.py" method="post">
     <P>
@@ -263,10 +264,13 @@ myform = """
 
 <FORM action="nachsichten.py" method="post">
     <P>
-    <label for="user_graph">Graphik fuer User:</label>
+    <label for="user_graph">Graphik fuer User
+    (Achtung, hier User_ID* eintragen, nicht Benutzernamen):</label>
         <input type="text" name="user_graph">
+        <br/>
     <label for="lines">Mit Linien darstellen:</label>
         <input type="text" name="lines" value="0">
+        <br/>
     <label for="rank">Rang statt # Sichtungen</label>
         <input type="text" name="rank" value="0">
     <br/>
@@ -275,6 +279,15 @@ myform = """
     </P>
  </FORM>
  <br/>
+ <small>
+ * Die User_ID kann in der Wikipedia unter "Einstellungen" eingesehen werden. <br/>
+ Einfach kopieren was bei "Benutzer-ID" steht.
+ </small>
+
+ <p>
+ Dieses Tool benutzt die GMT/UTC und liefert daher leicht andere Antworten als <br/>
+ Tools, die nach der deutschen Zeit rechnen.
+ </p>
 """ % (this_year, this_month)
 
 #main if statement
@@ -315,6 +328,20 @@ my = \
 """
 http://toolserver.org/~hroest/cgi-bin/nachsichten.py?user_graph=352933&rank=1&yrange=50
 """
+
+latest_file = '../../flagged_data/latest_actualisation'
+f = open( latest_file ); latest_act = ( f.readline()  )
+print """
+
+ <hr>
+
+ <p>
+ Fuer schone Graphiken zum Replication Lag etc, siehe auch
+ <a href="http://toolserver.org/~dapete/markstat/">hier</a>
+ </p>
+"""
+print "Letzte Aktualisierung der Daten (GMT/UTC):", latest_act
+f.close()
 
 extra_stuff =  """
     <small>some undocumented stuff: <br/><br/>
