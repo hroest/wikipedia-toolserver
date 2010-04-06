@@ -336,7 +336,7 @@ print """
  <hr>
 
  <p>
- Fuer schone Graphiken zum Replication Lag etc, siehe auch
+ Fuer schoene Graphiken zum Replication Lag etc, siehe auch
  <a href="http://toolserver.org/~dapete/markstat/">hier</a>
  </p>
 """
