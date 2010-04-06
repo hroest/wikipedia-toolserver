@@ -35,7 +35,16 @@ print "Anzahl ungesichtete Aenderungen: %s <br/>" % revlag_obj.unreviewed #len( 
 
 replag_lib.create_plot( myHist )
 
-replag_lib.revlag_color( db )
+#replag_lib.revlag_color( db )
+print "<br/>all"
+cursor = replag_lib.revlag_color_cursor_all(db)
+replag_lib.revlag_color_plot(cursor, 'all')
+print "<br/>last 24h"
+cursor = replag_lib.revlag_color_cursor_last24h(db)
+replag_lib.revlag_color_plot(cursor, 'last24')
+print "<br/>lastweek "
+cursor = replag_lib.revlag_color_cursor_lastweek(db)
+replag_lib.revlag_color_plot(cursor, 'lastweek')
 
 end = time.time()
 query_time = end - start
@@ -46,9 +55,12 @@ print """
  This query took %s s
 """ % query_time
 
+now = datetime.datetime.now()
+now_unix = time.mktime( now.timetuple()  )  
+
 print """
 <p>
-Letzte Aktualisierung der Daten (GMT/UTC): %s
+Letzte Aktualisierung der Daten (GMT/UTC): %s (vor %2.1f min)
 </p>
-""" % revlag_obj.dtime
+""" % ( revlag_obj.dtime, (now_unix - revlag_obj.timestamp)/60.0 )
 
