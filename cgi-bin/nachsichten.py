@@ -3,6 +3,7 @@ import cgitb; cgitb.enable()
 import MySQLdb
 import datetime
 import time 
+import inequality
 
 today = datetime.date.today()
 now = datetime.datetime.now()
@@ -61,6 +62,10 @@ def test(year, month, user_id):
 
 def main_table(year, month):
 
+    plot_name = 'ttmp_plot%s%s' % (year, month)
+    data_file = 'ttmp%s%s' % ( year, month)
+    pic_file =  '../tmp/pics/ttmp%s%s.png' % ( year, month)
+
     f, all_time = collect_data(year, month)
     if f == -1:
         print "wrong parameters, cannot find data for %s%s" % (year, month)
@@ -69,23 +74,104 @@ def main_table(year, month):
     if all_time:print "<p>Alle Sichtungsresultate</p>" 
     else: print "<p>Jahr %s, Monat %s </p>" % (year, month)
 
-    print "<table>"
-    print "<tr><th>Rang</th><th>Sichtungen</th><th>User</th></tr>"
-
     f.readline()
     lines = f.readlines()
-    lines.reverse()
+    numberFlagged = [ int(line.split()[0]) for line in lines ]
+    totalFlagged = sum( numberFlagged )
+
+    ################################
+    #start graph 
+    #write out data
+    f = open( data_file, 'w')
+    cumm_sum = 0
+    for i, n in enumerate(numberFlagged):
+        cumm_sum += n
+        f.write( '%s %s\n' % (i * 100.0 / len( numberFlagged), 
+                              cumm_sum * 100.0/totalFlagged ) )
+    f.close()
+
+    graph_title = 'Lorenz curve'
+    myYrange = ''
+    ylabel = "Prozent Sichtungen"
+    with_lines = 'with lines'
+    gnuplot =\
+    """
+    set terminal png enhanced #size 800,800
+    set xlabel "Prozent Sichter"
+    set ylabel "%(ylabel)s"
+    %(yrange)s
+
+    set grid
+
+    set xtics nomirror
+    set ytics nomirror 
+    set border 3
+    set nokey
+
+    set output "%(pic_file)s"
+    set title "%(graph_title)s"
+    plot "%(data_file)s" using 1:2 %(with_lines)s
+    """ % {'data_file' : data_file, 'graph_title' : graph_title,
+           'with_lines' : with_lines, 'yrange' : myYrange, 
+           'ylabel' : ylabel, 'pic_file' : pic_file}
+
+    f = open(plot_name, 'w')
+    f.write( gnuplot)
+    f.close()
+
+    import os 
+    os.system( "gnuplot %s" % plot_name )
+
+    mytext =  "<img src=\"%s\">" % pic_file
+    #end graph
+    #########################################
+
+    #use inequality.py from 
+    #GPL(c): Goetz Kluge, Munich 2004-09-17
+    #
+    #inequality.lua 1.4.0: inequality computations for welfare economics
+    #GPL(c): Goetz Kluge, Munich 2007-07-07
+    data = [ [1, n] for n in numberFlagged] 
+    myinequality,redundancy,equality,variation,mysum,absolute = inequality.ineq( data )
+
+    print """<p>Total wurden %s Sichtungen von %s Sichtern getaetigt. 
+        Der <a href='http://de.wikipedia.org/wiki/Gini-Koeffizient'>
+        Gini-Koeffizient</a> betraegt %s.</p>
+        """ % (str( totalFlagged ), str(len(numberFlagged)),  str( myinequality.Gini ) )
+    print "<table>"
+    print "<tr><th>Rang</th><th>Sichtungen</th><th>WP-UserID</th><th>Prozent</th><th></th></tr>"
+    print "<tr><td> </td><td> </td><td> </td><td> </td>" #dummy
+    print "<td width=10></td>" #empty coloumn to make some space
+    print "<td rowspan='24'> %s </td> </tr>" % (
+            mytext )
+
     i = 1
+    lines.reverse()
+    top1pcnt = len(numberFlagged) / 100 
+    top2pcnt = len(numberFlagged) / 50 
+    addtop1 = 0
+    addtop2 = 0
     for line in lines:
         col =  line.split()
+        if i <= top1pcnt: addtop1 += int( col[0] )
+        if i <= top2pcnt: addtop2 += int( col[0] )
         print "<tr>"
         print "<td>", i,      "</td>"
         print "<td>", col[0], "</td>"
         print "<td>", col[1], "</td>"
+        print "<td>%.2f</td>" % ( int( col[0]) * 100.0 / totalFlagged )
+        print "<td></td>" * 2
         print "</tr>"
         i += 1
 
     print "</table>"
+    print "<p>Die Top 1%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
+       top1pcnt, str( addtop1 * 100.0/totalFlagged ) )
+    print "<p>Die Top 2%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
+       top2pcnt, str( addtop2 * 100.0/totalFlagged ) )
+
+    os.system( 'rm %s ' % plot_name )
+    os.system( 'rm %s ' % data_file )
 
 class Userdata:
     def __init__(self, year=-1, month_str='-1',rank=-1,flagged=-1):
@@ -296,7 +382,10 @@ if form.has_key('month') and form.has_key('year'):
     month = "%02d" % int( month )
     year = form.getvalue('year')
     #needs_update( year, month)
-    main_table( year, month )
+    if form.has_key('exp'):
+        main_table_exp( year, month )
+    else:
+        main_table( year, month )
 elif form.has_key('user_graph'):
     user_id = form.getvalue( 'user_graph')
     rank = False
@@ -339,6 +428,7 @@ print """
  Fuer schoene Graphiken zum Replication Lag etc, siehe auch
  <a href="http://toolserver.org/~dapete/markstat/">hier</a>
  </p>
+ <p> <a href="http://toolserver.org/~hroest/">Zurueck zur Uebersicht</a> </p>
 """
 print "Letzte Aktualisierung der Daten (GMT/UTC):", latest_act
 f.close()
