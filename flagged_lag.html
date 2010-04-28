@@ -1,0 +1,38 @@
+<FORM action="cgi-bin/flagged_lag.py" method="post">
+    <P>
+    <h1>Histogram</h1>
+    <label for="hist">Histogram bins</label>
+        <input type="text" name="hist" value="24">
+    <small> h </small>
+    <br/>
+    <label for="h">Kernel smoother paramter</label>
+        <input type="text" name="h" value="-1">
+    <small>
+    A negative value will not do any smoothening.
+    </small>
+    <br/>
+    <h1>History</h1>
+    <label for="hist_day">Show last</label>
+        <input type="text" name="hist_day" value="7">
+    days
+    <small>(-1 means: show all)</small>
+    <br/>
+    <br/>
+    <INPUT type="submit" value="Send"> 
+    </P>
+ </FORM>
+ <br/>
+
+ <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<small>some undocumented stuff: <br/><br/>
+For all requests, you can also use GET requests.  <br/> <br/>
+For the histogram, you can set the paramters:         <br/>
+ --hist       = bin sizes in hours<br/>
+ --h          = kernel smoothing parameter h (if negative, no smoothing is performed) <br/>
+<br/>
+ For the history, you can set the parameters:<br/>
+ -- hist_day  = how many days back the history should go (-1 == all history)<br/>
+
+ You can also show one month only, e.g.
+<a href='http://toolserver.org/~hroest/cgi-bin/flagged_lag.py?history_month=4&history_year=2010'>Monat April</a>
+</small>
