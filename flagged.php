@@ -148,6 +148,7 @@ if ($category == '') {
     <br/>
     ** 1=$t4, -99 = $t4B
     </form>
+    <p> <a href='http://toolserver.org/~hroest/'>Zurueck zur Uebersicht</a> </p>
     </body>" ;
     print '</html>' ;
     exit  ;
@@ -299,6 +300,7 @@ $out .= "</a> " ;
 
 print "</script>$out" ;
 
+print '<p> <a href="http://toolserver.org/~hroest/">Zurueck zur Uebersicht</a> </p>';
 print '</html>' ;
 
 ?>
