@@ -4,13 +4,17 @@ import MySQLdb
 import datetime
 import time 
 import inequality
+import sys
+sys.path.append( '/home/hroest' )
+import optinHash
+
 
 today = datetime.date.today()
 now = datetime.datetime.now()
 this_year = today.year
 this_month = today.month
 
-print "Content-type: text/html"
+print "Content-type: text/html; charset=utf-8"
 print 
 
 class CustomException(Exception):
@@ -38,7 +42,7 @@ def collect_data(year, month):
     
     return f, all_time
 
-def test(year, month, user_id):
+def search_user_data(year, month, user_id):
 
     f, all_time = collect_data(year, month)
     if f == -1:
@@ -155,10 +159,12 @@ def main_table(year, month):
         col =  line.split()
         if i <= top1pcnt: addtop1 += int( col[0] )
         if i <= top2pcnt: addtop2 += int( col[0] )
+        myuser = int( col[1] )
+        if myuser in optinHash.optinhash: myuser = optinHash.optinhash[ myuser ]
         print "<tr>"
         print "<td>", i,      "</td>"
         print "<td>", col[0], "</td>"
-        print "<td>", col[1], "</td>"
+        print "<td>", str(myuser), "</td>"
         print "<td>%.2f</td>" % ( int( col[0]) * 100.0 / totalFlagged )
         print "<td></td>" * 2
         print "</tr>"
@@ -221,7 +227,7 @@ def main_plot(user_id, start_y, stop_y, start_m, stop_m,
         if year == stop_y: stopping = stop_m
         for i in range(starting,stopping+1):
             month = "%02d" % int( i )
-            result =  test( year, month , user_id)
+            result =  search_user_data( year, month , user_id)
             print year, ' ', month, " ", result
             u =  Userdata(year, month, result[0], result[1])
             data.append( u  )
@@ -387,7 +393,7 @@ if form.has_key('month') and form.has_key('year'):
     else:
         main_table( year, month )
 elif form.has_key('user_graph'):
-    user_id = form.getvalue( 'user_graph')
+    user_id = form.getvalue( 'user_graph').strip()
     rank = False
     lines = False
     yrange = -1
