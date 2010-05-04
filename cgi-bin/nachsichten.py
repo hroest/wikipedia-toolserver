@@ -76,7 +76,7 @@ def main_table(year, month):
         print "wrong parameters, cannot find data for %s%s" % (year, month)
         exit()
 
-    if all_time:print "<p>Alle Sichtungsresultate</p>" 
+    if all_time:print "<p>Alle Sichtungsresultate seit Januar 2009</p>" 
     else: print "<p>Jahr %s, Monat %s </p>" % (year, month)
 
     f.readline()
@@ -139,7 +139,7 @@ def main_table(year, month):
     data = [ [1, n] for n in numberFlagged] 
     myinequality,redundancy,equality,variation,mysum,absolute = inequality.ineq( data )
 
-    print """<p>Total wurden %s Sichtungen von %s Sichtern getaetigt. 
+    print """<p>Total wurden %s Sichtungen von %s Sichtern getätigt. 
         Der <a href='http://de.wikipedia.org/wiki/Gini-Koeffizient'>
         Gini-Koeffizient</a> betraegt %s.</p>
         """ % (str( totalFlagged ), str(len(numberFlagged)),  str( myinequality.Gini ) )
@@ -171,9 +171,9 @@ def main_table(year, month):
         mytable += "</tr>"
         i += 1
 
-    mytext += "<p>Die Top 1%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
+    mytext += "<p>Die Top 1%% der Sichter (%s Sichter) waren für %s%% der Sichtungen verantwortlich.</p>" % (
        top1pcnt, str( addtop1 * 100.0/totalFlagged ) )
-    mytext += "<p>Die Top 2%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
+    mytext += "<p>Die Top 2%% der Sichter (%s Sichter) waren für %s%% der Sichtungen verantwortlich.</p>" % (
        top2pcnt, str( addtop2 * 100.0/totalFlagged ) )
     print "<td rowspan='24'> %s </td> </tr>" % (
             mytext )
