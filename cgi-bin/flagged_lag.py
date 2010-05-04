@@ -1,4 +1,6 @@
 #!/usr/bin/python 
+# -*- coding: utf-8  -*-
+
 import datetime
 import time 
 import MySQLdb
@@ -6,14 +8,15 @@ import cgitb; cgitb.enable()
 db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
 import sys
 sys.path.append( '/home/hroest/' )
-print "Content-type: text/html"
-print 
-
 import replag_lib
 start = time.time()
-
 import cgi 
 form = cgi.FieldStorage()   # FieldStorage object to
+print "Content-type: text/html; charset=utf-8"
+print 
+
+default_days = 7 
+
 
 #myHist, timestamps, query_time = replag_lib.execute_unreviewed_changes_query(db)
 
@@ -83,7 +86,8 @@ if form.has_key('history_month') and form.has_key('history_year'):
 print "<br/>"* 5
 print "Du magst die Graphiken nicht, willst selber was einstellen? Hier gehts zum <a href='../flagged_lag.html'>Formular</a>  "
 print "<br/>"* 3
-print '<p> <a href="http://toolserver.org/~hroest/">Zurueck zur Uebersicht</a> </p>'
+print '<p> <a href="http://toolserver.org/~hroest/">Zurück zur Übersicht</a> </p>'
+ 
 
 end = time.time()
 query_time = end - start

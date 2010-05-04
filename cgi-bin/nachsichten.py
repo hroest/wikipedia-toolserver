@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8  -*-
 import cgitb; cgitb.enable()
 import MySQLdb
 import datetime
@@ -356,7 +357,7 @@ myform = """
 
 <FORM action="nachsichten.py" method="post">
     <P>
-    <label for="user_graph">Graphik fuer User
+    <label for="user_graph">Graphik für User
     (Achtung, hier User_ID* eintragen, nicht Benutzernamen):</label>
         <input type="text" name="user_graph">
         <br/>
@@ -431,10 +432,10 @@ print """
  <hr>
 
  <p>
- Fuer schoene Graphiken zum Replication Lag etc, siehe auch
+ Für schöne Graphiken zum Replication Lag etc, siehe auch
  <a href="http://toolserver.org/~dapete/markstat/">hier</a>
  </p>
- <p> <a href="http://toolserver.org/~hroest/">Zurueck zur Uebersicht</a> </p>
+ <p> <a href="http://toolserver.org/~hroest/">Zurück zur Übersicht</a> </p>
 """
 print "Letzte Aktualisierung der Daten (GMT/UTC):", latest_act
 f.close()
