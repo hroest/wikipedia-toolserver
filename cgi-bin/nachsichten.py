@@ -147,8 +147,6 @@ def main_table(year, month):
     print "<tr><th>Rang</th><th>Sichtungen</th><th>WP-UserID</th><th>Prozent</th><th></th></tr>"
     print "<tr><td> </td><td> </td><td> </td><td> </td>" #dummy
     print "<td width=10></td>" #empty coloumn to make some space
-    print "<td rowspan='24'> %s </td> </tr>" % (
-            mytext )
 
     i = 1
     lines.reverse()
@@ -156,26 +154,31 @@ def main_table(year, month):
     top2pcnt = len(numberFlagged) / 50 
     addtop1 = 0
     addtop2 = 0
+    mytable = ''
     for line in lines:
         col =  line.split()
         if i <= top1pcnt: addtop1 += int( col[0] )
         if i <= top2pcnt: addtop2 += int( col[0] )
         myuser = int( col[1] )
-        if myuser in optinHash.optinhash: myuser = optinHash.optinhash[ myuser ]
-        print "<tr>"
-        print "<td>", i,      "</td>"
-        print "<td>", col[0], "</td>"
-        print "<td>", str(myuser), "</td>"
-        print "<td>%.2f</td>" % ( int( col[0]) * 100.0 / totalFlagged )
-        print "<td></td>" * 2
-        print "</tr>"
+        if myuser in optinHash.optinhash: 
+            myuser = '<b>' + optinHash.optinhash[ myuser ] + '</b>'
+        mytable += "<tr>"
+        mytable += "<td>%d</td>"   % i
+        mytable += "<td>%s</td>" % col[0]
+        mytable += "<td>%s</td>" % str(myuser)
+        mytable += "<td>%.2f</td>" % ( int( col[0]) * 100.0 / totalFlagged )
+        mytable += "<td></td>" * 2
+        mytable += "</tr>"
         i += 1
 
-    print "</table>"
-    print "<p>Die Top 1%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
+    mytext += "<p>Die Top 1%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
        top1pcnt, str( addtop1 * 100.0/totalFlagged ) )
-    print "<p>Die Top 2%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
+    mytext += "<p>Die Top 2%% der Sichter (%s Sichter) waren fuer %s%% der Sichtungen verantwortlich.</p>" % (
        top2pcnt, str( addtop2 * 100.0/totalFlagged ) )
+    print "<td rowspan='24'> %s </td> </tr>" % (
+            mytext )
+    print mytable
+    print "</table>"
 
     os.system( 'rm %s ' % plot_name )
     os.system( 'rm %s ' % data_file )
@@ -418,7 +421,7 @@ elif form.has_key('user_graph'):
     else: 
         main_plot( user_id, 2009, this_year, 1, this_month, rank, lines, yrange  )
 else:
-    print myform 
+    print myform
 
 my = \
 """
