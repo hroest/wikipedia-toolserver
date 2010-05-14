@@ -8,6 +8,7 @@ import inequality
 import sys
 sys.path.append( '/home/hroest' )
 import optinHash
+gnuplot_path = 'gnuplot'
 
 
 today = datetime.date.today()
@@ -125,7 +126,7 @@ def main_table(year, month):
     f.close()
 
     import os 
-    os.system( "gnuplot %s" % plot_name )
+    os.system( "%s %s" % (gnuplot_path, plot_name ) ) 
 
     mytext =  "<img src=\"%s\">" % pic_file
     #end graph
@@ -286,7 +287,7 @@ def main_plot(user_id, start_y, stop_y, start_m, stop_m,
     f.close()
 
     import os 
-    os.system( "gnuplot %s" % plot_name )
+    os.system( "%s %s" % (gnuplot_path, plot_name ) ) 
 
     print '<br/>' * 2
     print "<img src=\"%s\">" % pic_file
@@ -460,3 +461,9 @@ extra_stuff =  """
 print "<br/>" * 4
 print "<br/>" * 20
 print extra_stuff
+
+now = datetime.datetime.now()
+now_unix = time.mktime( now.timetuple()  )  
+f = open( '/home/hroest/nachsichten.log', 'a')
+f.write( "%s, %s\n" % (str(int(now_unix) ), str( now)  ) )
+f.close()

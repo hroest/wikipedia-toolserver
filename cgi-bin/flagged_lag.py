@@ -29,11 +29,12 @@ revlag_obj = replag_lib.execute_unreviewed_changes_query_fromCache(db)
 myHist = revlag_obj.myHist
 revlag_obj.get_extended(db)
 timestamps = revlag_obj.timestamps
-my3Hist = replag_lib.create_hist_from_timestamps( timestamps, 3)
+#my3Hist = replag_lib.create_hist_from_timestamps( timestamps, 3)
 #my1Hist = replag_lib.create_hist_from_timestamps( timestamps, 1)
 
 print "<table > <tr>" 
 print"<td valign='top'>"
+
 
 plotted_lines = False
 if form.has_key('hist'):
@@ -60,6 +61,7 @@ else:
     replag_lib.create_plot( myHist, plot_lines=True )
     plotted_lines = True
 
+
 print "</td>"
 print "<td width=20></td>"
 
@@ -72,11 +74,12 @@ print "Der Mittelwert ist: %.2f d<br/>" % ( revlag_obj.mean / (3600 * 24) )
 print "<!--"
 print "Histogram 24 hour resolution"
 print myHist
-print "Histogram 3 hour resolution"
-print my3Hist
+#print "Histogram 3 hour resolution"
+#print my3Hist
 print "-->"
 
 print "Älteste Änderung: %s d <br/>" % revlag_obj.longest_delay #len( myHist )
+print "Anzahl Änderungen, die älter als %s Tage sind: %s <br/>" % (revlag_obj.longest_delay , myHist[-1] )
 print "Anzahl ungesichtete Änderungen: %s <br/>" % revlag_obj.unreviewed #len( timestamps )
 
 if plotted_lines: 
@@ -119,6 +122,10 @@ print """
 
 now = datetime.datetime.now()
 now_unix = time.mktime( now.timetuple()  )  
+
+f = open( '/home/hroest/flagged_lag.log', 'a')
+f.write( "%s, %s\n" % (str(int(now_unix) ), str( now)  ) )
+f.close()
 
 print """
 <p>
