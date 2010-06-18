@@ -241,7 +241,7 @@ foreach ($output AS $page) {
     if($myfast > 2)  $note .= " Alter = "  . $timediff . " Tage" ;
 
     $printlist .= '<li><a target="$target" href="' . $url . '">' ;
-    $printlist .= $t . "</a>$note</li>" ;
+    $printlist .= $t . "</a>$note</li>\n" ;
 
     $taburls[] = $url ;
 }
