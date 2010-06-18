@@ -25,6 +25,16 @@ class CustomException(Exception):
    def __str__(self):
        return repr(self.parameter)
 
+def collect_data_cat(year, month, cat):
+    file = '../../flagged_data/all_month_users_%s%s%s' % (year, month, cat)
+    all_time = False
+    try:
+        f = open(file)
+    except IOError:
+        return -1,-1
+    
+    return f, all_time
+
 def collect_data(year, month):
     file = '../../flagged_data/all_month_users_%s%s' % (year, month)
     #print "collect data"
@@ -66,13 +76,16 @@ def search_user_data(year, month, user_id):
     #we didnt find an entry
     return [ len(lines), 0]
 
-def main_table(year, month):
+def main_table(year, month, reverseLorzen=False, specialcat = ''):
 
     plot_name = 'ttmp_plot%s%s' % (year, month)
     data_file = 'ttmp%s%s' % ( year, month)
     pic_file =  '../tmp/pics/ttmp%s%s.png' % ( year, month)
 
-    f, all_time = collect_data(year, month)
+    if specialcat == '': f, all_time = collect_data(year, month)
+    else: 
+        f, all_time = collect_data_cat(year, month, specialcat)
+        print "<p>Fuer Kategorie %s</p>" % specialcat
     if f == -1:
         print "wrong parameters, cannot find data for %s%s" % (year, month)
         exit()
@@ -90,6 +103,7 @@ def main_table(year, month):
     #write out data
     f = open( data_file, 'w')
     cumm_sum = 0
+    if reverseLorzen: numberFlagged.reverse()
     for i, n in enumerate(numberFlagged):
         cumm_sum += n
         f.write( '%s %s\n' % (i * 100.0 / len( numberFlagged), 
@@ -172,10 +186,12 @@ def main_table(year, month):
         mytable += "</tr>"
         i += 1
 
-    mytext += "<p>Die Top 1%% der Sichter (%s Sichter) waren für %s%% der Sichtungen verantwortlich.</p>" % (
-       top1pcnt, str( addtop1 * 100.0/totalFlagged ) )
-    mytext += "<p>Die Top 2%% der Sichter (%s Sichter) waren für %s%% der Sichtungen verantwortlich.</p>" % (
-       top2pcnt, str( addtop2 * 100.0/totalFlagged ) )
+    mytext += "<p>Die Top 1%% (x=99%%) der Sichter (%s Sichter) waren für %.2f%% der Sichtungen verantwortlich.</p>" % (
+       top1pcnt, addtop1 * 100.0/totalFlagged  )
+    mytext += "<p>Die Top 2%% (x=98%%) der Sichter (%s Sichter) waren für %.2f%% der Sichtungen verantwortlich.</p>" % (
+       top2pcnt, addtop2 * 100.0/totalFlagged  )
+    mytext += "<p>Die Top 5 Sichter waren für %.2f%% der Sichtungen verantwortlich.</p>" % (
+      sum( [int(line.split()[0]) for line in lines[:5]] ) * 100.0/totalFlagged)
     print "<td rowspan='24'> %s </td> </tr>" % (
             mytext )
     print mytable
@@ -352,6 +368,14 @@ myform = """
         <input type="text" name="month" value="%s">
     <br/>
     <br/>
+ <small>
+ Man kann sich 
+ <a href="http://de.wikipedia.org/wiki/Benutzer:HRoestBot/Nachsichten">hier</a>
+ im Opt-In eintragen und dann erscheint der Benutzername im Ranking. <br/>
+ Weiterhin kriegt man taegliche Updates mit den neusten Sichterstatistiken.
+ </small>
+    <br/>
+    <br/>
     <INPUT type="submit" value="Send"> 
     </P>
  </FORM>
@@ -377,10 +401,8 @@ myform = """
  </FORM>
  <br/>
  <small>
- * Die User_ID kann in der Wikipedia unter "Einstellungen" eingesehen werden. <br/>
- Einfach kopieren was bei "Benutzer-ID" steht.
- </small>
-
+ * Die User_ID kann in der Wikipedia unter "Einstellungen" eingesehen werden. 
+ Einfach kopieren was bei "Benutzer-ID" steht. <br/>
  <p>
  Dieses Tool benutzt die GMT/UTC und liefert daher leicht andere Antworten als <br/>
  Tools, die nach der deutschen Zeit rechnen.
@@ -393,16 +415,25 @@ if form.has_key('month') and form.has_key('year'):
     month = "%02d" % int( month )
     year = form.getvalue('year')
     #needs_update( year, month)
+    reverseLorenz = False
+    specialCategory = ''
+    if form.has_key('reverseLorenz'): reverseLorenz = True
+    if form.has_key('specialCategory'): specialCategory = form.getvalue('specialCategory')
     if form.has_key('exp'):
-        main_table_exp( year, month )
+        main_table_exp( year, month, reverseLorenz, specialCategory )
     else:
-        main_table( year, month )
+        main_table( year, month, reverseLorenz, specialCategory )
 elif form.has_key('user_graph'):
-    user_id = form.getvalue( 'user_graph').strip()
     rank = False
     lines = False
     yrange = -1
     error = False
+    try:
+        user_id = form.getvalue( 'user_graph').strip()
+        user_id = int( user_id )
+    except:
+        print '<font color="Red">Please user a number for the user_id</font>'
+        error = True
     try:
         if form.has_key('rank'):
             rank = form.getvalue( 'rank')
