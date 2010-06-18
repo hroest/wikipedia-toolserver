@@ -2,7 +2,7 @@
 # -*- coding: utf-8  -*-
 import cgitb; cgitb.enable()
 import datetime, time
-import sys
+import sys, os
 sys.path.append( '/home/hroest' )
 sys.path.append( '/home/hroest/pywikipedia-folder/botpywikipedia/')
 import optinHash
@@ -85,12 +85,16 @@ if user not in optinHash.optinhash.values():
         print "Not allowed for this user"
         exit()
 
-import general_lib
 if general_lib.acquire_pywiki_lock():
     #print "acquired lock<br/>"
     print "Konnte den Prozess starten.<br/>"
+    f = open('reviewed.dat', 'w' ) 
+    f.write( user )
+    f.close()
     h_lib_api.postReviewedPagesandTable( user.decode('utf-8'), site )
-    print "ERFOLG! <br/>"
+    #os.system('qsub -N reviewpages /home/hroest/postReviewedPagesandTables.sh')
+    print "ERFOLG! Der Auftrag wurde gestartet<br/>"
+    print "Die Aktualisierung kann aber zeitversetzt erfolgen!<br/>"
     print "Habe die Tabellen fuer den User %s erneuert." % user
     general_lib.release_pywiki_lock()
 else:

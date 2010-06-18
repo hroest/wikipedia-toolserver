@@ -91,7 +91,8 @@ print " </tr> </table>"
 
 if form.has_key('hist_day'):
     days = float( form.getvalue('hist_day') )
-    cursor = replag_lib.revlag_color_cursor_lastseconds(db, days * 24 * 3600)
+    if days < 0: cursor = replag_lib.revlag_color_cursor_all(db)
+    else: cursor = replag_lib.revlag_color_cursor_lastseconds(db, days * 24 * 3600)
     replag_lib.revlag_color_plot(cursor, 'history')
 else:
     if form.has_key('history_month') and form.has_key('history_year'):
@@ -101,7 +102,7 @@ else:
         cursor = replag_lib.revlag_color_cursor_month(db, year, month )
         replag_lib.revlag_color_plot(cursor, 'one_month_only')
     else:
-        cursor = replag_lib.revlag_color_cursor_lastseconds(db, default_days * 24 * 3600)
+        cursor = replag_lib.revlag_color_cursor_lastseconds(db, default_days* 24 * 3600)
         replag_lib.revlag_color_plot(cursor, 'history')
 
 
