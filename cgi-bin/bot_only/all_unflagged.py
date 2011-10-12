@@ -34,6 +34,7 @@ c.execute( "use dewiki_p" )
 c.execute( all )
 lines = c.fetchall()
 
+#this may take between 2 minutes and 15 seconds, depending on the query cache
 unflagged_list = []
 for l in lines:
     unf = db_api.UnFlagged()

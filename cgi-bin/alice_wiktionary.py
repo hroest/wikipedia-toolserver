@@ -1,17 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8  -*-
-#import cgitb; cgitb.enable()
-#import MySQLdb
-#import datetime
-#import time 
-#import inequality
-#import sys
-#
-#
-#today = datetime.date.today()
-#now = datetime.datetime.now()
-#this_year = today.year
-#this_month = today.month
+# This displays 5 random wiktionary pages that either have {{el} or {{es} as
+# template or have neither.
 #
 import cgitb; cgitb.enable()
 import MySQLdb, sys

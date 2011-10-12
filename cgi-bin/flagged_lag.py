@@ -5,7 +5,9 @@ import datetime
 import time 
 import MySQLdb
 import cgitb; cgitb.enable()
-db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
+
+
+
 import sys
 sys.path.append( '/home/hroest/' )
 import replag_lib
@@ -14,6 +16,17 @@ import cgi
 form = cgi.FieldStorage()   # FieldStorage object to
 print "Content-type: text/html; charset=utf-8"
 print 
+
+
+try:
+    db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
+except Exception:
+    print  "Currently there is no new data available. <br/>"
+    print  "This is due to the toolserver being overloaded.<br/>"
+    print  "The experts are working on it."
+    print  "In the meantime I can present the most recent picture:<br/>"
+    print  "<img src='../tmp/pics/replagregular.png'/>"
+    exit()
 
 default_days = 7 
 
