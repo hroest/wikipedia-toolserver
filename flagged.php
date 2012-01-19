@@ -24,7 +24,7 @@ function get_fr( $language, $user ) {
 }
 
 //this will get all unreviewed pages that are in a given category
-function db_get_unreviewed( $language, $category, $fast = 99) {
+function db_get_unreviewed( $language, $category, $fast = 99, $namespace=0) {
     //global $mysql_con;
     if ( !isset ( $mysql_con ) ) {$mysql_con = set_up_db($language);}
     make_db_safe ( $category ) ;
@@ -32,7 +32,7 @@ function db_get_unreviewed( $language, $category, $fast = 99) {
     $sql = "SELECT page_id,page_title,page_latest,fp_stable, rev_len
     FROM page,categorylinks,flaggedpages, revision
     WHERE cl_to=\"$category\" AND cl_from=page_id AND fp_page_id=page_id 
-    AND page_latest<>fp_stable AND page_namespace=0
+    AND page_latest<>fp_stable AND page_namespace=$namespace
     AND rev_id=page_latest";
 
     $db = $language . 'wiki_p' ;
@@ -43,6 +43,15 @@ function db_get_unreviewed( $language, $category, $fast = 99) {
         $latest_size = $o ->rev_len;
         $current_rev = $o->page_latest;
         $stable_rev = $o->fp_stable;
+
+        if($stable_rev >= $current_rev) 
+        {
+            // something is wrong here, lets leave
+            print "Something is wrong here with ";
+            print  $o->page_title;
+            print " <br/>";
+            continue;
+        }
 
         if($fast == 1) {
             $reviewed_pages[ $o-> page_id ] = array( 'title' => $o->page_title,
@@ -66,6 +75,8 @@ function db_get_unreviewed( $language, $category, $fast = 99) {
             $res_inner = mysql_db_query ( $db , $sql , $mysql_con ) ;
             $o2 = mysql_fetch_object ( $res_inner ) ;
             $current_rev = $o2->rev_parent_id;
+            if($current_rev == 0) {break;}
+            if(!$o2) {break;}
         }
         $first_unflagged_timestamp = $o2->rev_timestamp ;
 
@@ -83,6 +94,7 @@ function db_get_unreviewed( $language, $category, $fast = 99) {
 $language = get_request ( 'language' , 'de' ) ;
 $category = get_request ( 'category' , '' ) ;
 $depth = get_request ( 'depth' , 1 ) ;
+$namespace = get_request ( 'namespace' , 0 ) ;
 $sortby = get_request ( 'sortby' , 'category' ) ;
 $exclude_noncode = get_request ( 'exclude' , '' ) ;
 $fast = get_request ( 'fast' , 1 ) ;
@@ -110,6 +122,7 @@ if ($category == '') {
         $t4 = 'Kategorie und direkte Unterkategorien' ;
         $t4B = 'Alle Unterkategorien' ;
         $t5= 'Sortiere nach' ;
+        $t6= 'Namensraum' ;
         $t9 = 'Los!' ;
 
     print "<body>
@@ -123,6 +136,7 @@ if ($category == '') {
         <textarea name='exclude' rows='3' cols='80'></textarea></th>
     </tr>
     <tr><th>$t3**</th><td><input type='text' name='depth' value='$depth' /> </td></tr>
+    <tr><th>$t6</th><td><input type='text' name='namespace' value='$namespace' /> 0=articles, 14=categories</td></tr>
     <tr><th></th><td><input type='submit' name='doit' value='$t9' /></td></tr>
     <tr><th>$t5</th><th>
        <Input type = 'Radio' Name ='sortby' value= 'size' checked='checked' >Size
@@ -195,7 +209,7 @@ print "Durchsuche " .  count ( $data ) . " Kategorien.";
 
 $output = array () ;
 foreach ( $data AS $d ) {
-    $my_unreviewed = db_get_unreviewed ( $language, $d, $myfast);
+    $my_unreviewed = db_get_unreviewed ( $language, $d, $myfast, $namespace);
     foreach ( $my_unreviewed AS $k => $v ) { // Show each article only once
         if ( isset ( $output[$k] ) ) {unset ( $my_unreviewed[$k] );}
     }
