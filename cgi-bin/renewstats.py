@@ -89,6 +89,7 @@ if user not in optinHash.optinhash.values():
         print "Not allowed for this user"
         exit()
 
+general_lib.release_pywiki_lock_if_older_than()
 if general_lib.acquire_pywiki_lock():
     #print "acquired lock<br/>"
     print "Konnte den Prozess starten.<br/>"
