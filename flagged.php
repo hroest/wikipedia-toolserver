@@ -47,7 +47,7 @@ function db_get_unreviewed( $language, $category, $fast = 99, $namespace=0) {
         if($stable_rev >= $current_rev) 
         {
             // something is wrong here, lets leave
-            print "Something is wrong here with ";
+            print "<br/>Something is wrong here with ";
             print  $o->page_title;
             print " <br/>";
             continue;
