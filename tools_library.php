@@ -93,7 +93,7 @@ function get_time_diff($timestamp, $return_as = 'D') {
     $min =  date(i) - substr( $timestamp, 10, 2) ;
 
     if ($return_as == 'D') {
-        $days = 356*$year + 30*$mon + $day;
+        $days = 360*$year + 30*$mon + $day;
         return $days;
     }
 }
