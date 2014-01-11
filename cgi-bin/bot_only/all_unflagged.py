@@ -17,6 +17,7 @@ import cgitb; cgitb.enable()
 import MySQLdb, sys
 sys.path.append( '/home/hroest' )
 import db_api
+#print "Content-type: text/html; charset=utf-8"
 print "Content-type: text/plain; charset=utf-8"
 print ""
 
@@ -45,6 +46,7 @@ for l in lines:
 unflagged_list.sort( lambda x,y: cmp(x.first_time, y.first_time ) )
 
 for unfl in unflagged_list:
+    if unfl.error: continue
     print unfl.page_title, "||;;;", unfl.page_nr, "||;;;",unfl.stable, "||;;;",unfl.latest, "||;;;",unfl.first_time 
 
 
