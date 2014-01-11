@@ -7,6 +7,7 @@ db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
 sys.path.append( '/home/hroest/' )
 import replag_lib, db_api
 import cgi 
+# import cgitb; cgitb.enable()
 form = cgi.FieldStorage()   # FieldStorage object to
 start = time.time()
 print "Content-type: text/html; charset=utf-8"
@@ -60,6 +61,10 @@ def db_get_unreviewed( language, category, c):
         and rev_id >= %s""" % (page.id, page.stable_rev)
         c.execute( sql ) 
         revisions = c.fetchall()
+
+        # if for some reason the database is inconsistent and there are no
+        # unreviewed revisions for this
+        if len(revisions) < 2: continue
 
         stable_len = revisions[0][4]
         page.size_diff = page.latest_size - stable_len
@@ -130,6 +135,7 @@ sortby          =     form.getvalue( 'sortby')
 exclude_noncode =     form.getvalue( 'exclude')
 show_color_at   =     300
 diff_only       =     0
+if exclude_noncode is None: exclude_noncode = ''
 exclude = exclude_noncode.replace( " ", "_")
 exclude = exclude.split(";")
 
@@ -191,7 +197,7 @@ for page in output:
     note += " Alter = "  + str(timediff) + " Tage" ;
 
     printlist += '<li><a target="_blank" href="%s">' % url
-    printlist += t + "</a>%s</li>\n" % note;
+    printlist += t + "</a> %s </li>\n" % note;
 
     taburls.append(url)
 
