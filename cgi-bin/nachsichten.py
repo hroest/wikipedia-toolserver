@@ -26,10 +26,11 @@ class CustomException(Exception):
        return repr(self.parameter)
 
 def collect_data_cat(year, month, cat):
-    file = '../../flagged_data/all_month_users_%s%s%s' % (year, month, cat)
-    all_time = False
+    myfile = '../../flagged_data/all_month_users_%s%s%s' % (year, month, cat)
+    # print "collect data cat, open file " , myfile
+    all_time = -1
     try:
-        f = open(file)
+        f = open(myfile)
     except IOError:
         return -1,-1
     
@@ -39,11 +40,14 @@ def collect_data(year, month):
     file = '../../flagged_data/all_month_users_%s%s' % (year, month)
     #print "collect data"
     #print file, "<br/>"
-    all_time = False
+    all_time = -1
     try: 
         if int(year) < -99 or int(month) < -99:
-            file = '../../flagged_data/all_time'
-            all_time = True
+            file = '../../flagged_data/all_year_users_%s' % year
+            all_time = int( year )
+            if int(year) < -99:
+                file = '../../flagged_data/all_time'
+                all_time = 0
     except ValueError:
         return -1,-1
 
@@ -90,11 +94,15 @@ def main_table(year, month, reverseLorzen=False, specialcat = ''):
         print "wrong parameters, cannot find data for %s%s" % (year, month)
         exit()
 
-    if all_time:print "<p>Alle Sichtungsresultate seit Januar 2009</p>" 
-    else: print "<p>Jahr %s, Monat %s </p>" % (year, month)
+    if all_time == 0: print "<p>Alle Sichtungsresultate seit Januar 2009</p>" 
+    elif all_time == -1: print "<p>Jahr %s, Monat %s </p>" % (year, month)
+    else: print "<p>Alle Sichtungsresultate für das Jahr %s</p>" % year
 
     f.readline()
     lines = f.readlines()
+    if len(lines) == 0: 
+        print "Leider keine Daten vorhanden fuer diese Anfrage"
+        return
     numberFlagged = [ int(line.split()[0]) for line in lines ]
     totalFlagged = sum( numberFlagged )
 
@@ -152,6 +160,8 @@ def main_table(year, month, reverseLorzen=False, specialcat = ''):
     #inequality.lua 1.4.0: inequality computations for welfare economics
     #GPL(c): Goetz Kluge, Munich 2007-07-07
     data = [ [1, n] for n in numberFlagged] 
+    # print "Here I want to print my data"
+    # print data
     myinequality,redundancy,equality,variation,mysum,absolute = inequality.ineq( data )
 
     print """<p>Total wurden %s Sichtungen von %s Sichtern getätigt. 
@@ -237,6 +247,8 @@ def main_plot(user_id, start_y, stop_y, start_m, stop_m,
     plot_name = 'tmp_plot%s' % user_id
     data_file = 'tmp%s' % user_id
     pic_file =  '../tmp/pics/tmp%s.png' % user_id
+    start_date = "2009-01"
+    month_tics = 2
 
     #user_id = 352933
     #year = 2010
@@ -282,9 +294,13 @@ def main_plot(user_id, start_y, stop_y, start_m, stop_m,
     set xdata time
     set timefmt "%%Y-%%m-%%d"
     set format x "%%m.%%Y"
-    #Rotation only for TT fonts...so no luck here
-    #set xtics border scale 3,2 mirror rotate by 45  offset character 0, -5, 0 autofreq
 
+    #Rotation only for TT fonts...so no luck here
+    #set xtics border scale 3,2 mirror rotate by 45  offset character 0, -5, 0 
+    set xtics "%(start_date)s", 2678400*%(months)s rotate by 90 \
+            offset character 0, -3, 0 # autofreq
+    #set xtics "2009-01", 2678400*2 rotate by 45 offset character -4, -2, 0
+    #set xtics "01/01/2009", 2678400*4
     set mxtics 2
     set xtics nomirror
     set ytics nomirror 
@@ -296,7 +312,8 @@ def main_plot(user_id, start_y, stop_y, start_m, stop_m,
     plot "tmp%(user_id)s" using 1:2 %(with_lines)s
     """ % {'user_id' : user_id, 'graph_title' : graph_title,
            'with_lines' : with_lines, 'yrange' : myYrange, 
-           'ylabel' : ylabel, 'pic_file' : pic_file}
+           'ylabel' : ylabel, 'pic_file' : pic_file, 'start_date' : start_date, 
+           'months' : month_tics }
 
     f = open(plot_name, 'w')
     f.write( gnuplot)
@@ -487,6 +504,11 @@ extra_stuff =  """
      For the tabl, you can set the parameters:<br/>
      -- month<br/>
      -- year<br/>
+
+     Some nice extra <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=5&year=2010&specialCategory=schweiz">http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=5&year=2010&specialCategory=schweiz</a>
+     <br> <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=-100&year=-100">All time</a>
+     <br> <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=-100&year=2009">All of 2009</a>
+     <br> <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=-100&year=2010">All of 2010</a>
     
     </small>"""
 print "<br/>" * 4
