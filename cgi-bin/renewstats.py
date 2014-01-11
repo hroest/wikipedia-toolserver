@@ -57,6 +57,10 @@ user = form.getvalue( 'user_name' )
 def renew_optinhash(db, optin):
     optinPage = wikipedia.Page(wikipedia.getSite(),optin)
     text = optinPage.get()
+    # TODO
+    text = text.replace("'", "\\'")
+    text = text.replace('"', '\\"')
+    text = text.replace(";", "")
     names = text.split('\n')
     names = [n for n in names if n != '']
     #now do the optin-hash
@@ -71,7 +75,7 @@ def renew_optinhash(db, optin):
     f.write( '# -*- coding: utf-8  -*-\n')
     f.write( 'optinhash = {\n')
     for l in lines:
-        f.write( "%s : '%s',\n" % (l[0], l[1]) )
+        f.write( "%s : '%s',\n" % (l[0], l[1].replace("'", "\\'") ) )
     f.write( "'dummy' : -1}")
     f.close()
 
