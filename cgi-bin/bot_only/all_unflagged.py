@@ -16,12 +16,15 @@
 import cgitb; cgitb.enable()
 import MySQLdb, sys
 sys.path.append( '/home/hroest' )
+sys.path.append( '/data/project/hroest2/meta' )
 import db_api
-#print "Content-type: text/html; charset=utf-8"
+import general_lib
+
 print "Content-type: text/plain; charset=utf-8"
 print ""
 
-db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
+db = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.mysql_host)
+
 #this query takes 30 seconds and selects all currently unflagged pages
 all = """
 SELECT page_id,page_title,page_latest,fp_stable, rev_len 

@@ -6,10 +6,9 @@ import datetime
 import time 
 import inequality
 import sys
-sys.path.append( '/home/hroest' )
+sys.path.append( '/data/project/hroest2/' )
 import optinHash
 gnuplot_path = 'gnuplot'
-
 
 today = datetime.date.today()
 now = datetime.datetime.now()

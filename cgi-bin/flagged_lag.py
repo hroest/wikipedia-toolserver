@@ -6,20 +6,18 @@ import time
 import MySQLdb
 import cgitb; cgitb.enable()
 
-
-
 import sys
-sys.path.append( '/home/hroest/' )
+sys.path.append( '/data/project/hroest2/meta' )
 import replag_lib
+import general_lib
 start = time.time()
 import cgi 
 form = cgi.FieldStorage()   # FieldStorage object to
 print "Content-type: text/html; charset=utf-8"
 print 
 
-
 try:
-    db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
+    db = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.mysql_host)
 except Exception:
     print  "Currently there is no new data available. <br/>"
     print  "This is due to the toolserver being overloaded.<br/>"
@@ -29,7 +27,6 @@ except Exception:
     exit()
 
 default_days = 7 
-
 
 #myHist, timestamps, query_time = replag_lib.execute_unreviewed_changes_query(db)
 
@@ -137,9 +134,9 @@ print """
 now = datetime.datetime.now()
 now_unix = time.mktime( now.timetuple()  )  
 
-f = open( '/home/hroest/flagged_lag.log', 'a')
-f.write( "%s, %s\n" % (str(int(now_unix) ), str( now)  ) )
-f.close()
+# f = open( '/home/hroest/flagged_lag.log', 'a')
+# f.write( "%s, %s\n" % (str(int(now_unix) ), str( now)  ) )
+# f.close()
 
 print """
 <p>
