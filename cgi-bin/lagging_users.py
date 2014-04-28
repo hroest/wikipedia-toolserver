@@ -16,13 +16,16 @@
 import cgitb; cgitb.enable()
 import MySQLdb, sys
 sys.path.append( '/home/hroest' )
+sys.path.append( '/data/project/hroest2/meta' )
 import db_api
+import general_lib
+from general_lib import database_name as myDB
 import time, datetime
 print "Content-type: text/html; charset=utf-8"
 print ""
 
 try:
-    db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
+    db = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.mysql_host)
 except Exception:
     print  "Currently there is no data available. <br/>"
     print  "This is due to the toolserver being overloaded.<br/>"
@@ -30,10 +33,10 @@ except Exception:
     exit()
 
 subquery = """
-create temporary table u_hroest.tmp123 as
-select count(*) as occurence, rev_user, rev_user_text, updated_at from u_hroest.replag_users group by rev_user_text
+create temporary table %s.tmp123 as
+select count(*) as occurence, rev_user, rev_user_text, updated_at from %s.replag_users group by rev_user_text
 having count(*) >= 5 order by count(*) desc
-"""
+""" % (myDB, myDB)
 c  = db.cursor()
 c.execute( subquery )
 
@@ -41,12 +44,12 @@ c.execute( subquery )
 
 mainquery = """
 select occurence, rev_user, rev_user_text, updated_at, group_concat( ug_group )
-from u_hroest.tmp123
+from %s.tmp123
 left join dewiki_p.user_groups ug on ug.ug_user = rev_user 
 group by rev_user_text #rev_user
 order by occurence DESC
 # and ug.ug_group ='editor'
-"""
+""" % (myDB)
 
 c.execute( mainquery )
 lines = c.fetchall()
