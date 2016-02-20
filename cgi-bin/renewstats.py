@@ -57,55 +57,30 @@ if not form.has_key('user_name'):
 user = form.getvalue( 'user_name' )
 
 
-
-def renew_optinhash(db, optin):
-    optinPage = wikipedia.Page(wikipedia.getSite(),optin)
-    text = optinPage.get()
-    # TODO
-    text = text.replace("'", "\\'")
-    text = text.replace('"', '\\"')
-    text = text.replace(";", "")
-    names = text.split('\n')
-    names = [n for n in names if n != '']
-    #now do the optin-hash
-    query = """
-    select user_id, user_name from dewiki_p.user
-    where user_name in ('%s')
-    """ % "', '".join( names )
-    c = db.cursor()
-    c.execute( query.encode('utf-8') )
-    lines = c.fetchall()
-    f = open( optinhashfile, 'w')
-    f.write( '# -*- coding: utf-8  -*-\n')
-    f.write( 'optinhash = {\n')
-    for l in lines:
-        f.write( "%s : '%s',\n" % (l[0], l[1].replace("'", "\\'") ) )
-    f.write( "'dummy' : -1}")
-    f.close()
-
-
 #first check whether the user is in the optin-hash
 if user not in optinHash.optinhash.values():
-    renew_optinhash(db, optin_page )
+    ReviewBotLib.renew_optinhash(db, optin_page, optinhashfile)
     reload( optinHash )
-    #still not in there?
     if user not in optinHash.optinhash.values():
         print "Not allowed for this user"
         exit()
 
-general_lib.release_pywiki_lock_if_older_than()
-if general_lib.acquire_pywiki_lock():
+# general_lib.release_pywiki_lock()
+
+# general_lib.release_pywiki_lock_if_older_than()
+if True: 
+    # general_lib.acquire_pywiki_lock():
     #print "acquired lock<br/>"
     print "Konnte den Prozess starten.<br/>"
-    f = open('reviewed.dat', 'w' ) 
-    f.write( user )
-    f.close()
-    h_lib_api.postReviewedPagesandTable( user.decode('utf-8'), site )
+    ## #f = open('reviewed.dat', 'w' ) 
+    ## #f.write( user )
+    ## #f.close()
+    h_lib_api.postReviewedPagesandTable( user.decode('utf-8'), site, async=False )
     #os.system('qsub -N reviewpages /home/hroest/postReviewedPagesandTables.sh')
     print "ERFOLG! Der Auftrag wurde gestartet<br/>"
     print "Die Aktualisierung kann aber zeitversetzt erfolgen!<br/>"
     print "Habe die Tabellen fuer den User %s erneuert." % user
-    general_lib.release_pywiki_lock()
+    # general_lib.release_pywiki_lock()
 else:
     print " <br/>Konnte den Prozess nicht starten.<br/>"
     print "Das heisst, dass gerade ein anderer Benutzer das Tool gerade benutzt.<br/>"
