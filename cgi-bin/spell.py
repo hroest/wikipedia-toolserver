@@ -331,6 +331,10 @@ for pagenr, page in enumerate(pages):
             correct = w.suggestions[0].encode("utf8")
             if correct.find( " " ) != -1 and stringent < 100:
                 continue
+
+        if w.derive() in ["br", "name", "ref"]:
+                continue
+
         wrongWords.append(w)
 
     if len(wrongWords) == 0: 
