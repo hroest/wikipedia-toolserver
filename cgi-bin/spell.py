@@ -9,7 +9,7 @@ def escape(html):
 import time
 start = time.time()
 
-import cgitb; cgitb.enable()
+# import cgitb; cgitb.enable()
 
 import MySQLdb
 import sys
@@ -141,8 +141,7 @@ if not form.has_key('title') and not ( form.has_key('random') or form.has_key('s
     exit()
 
 import wikipedia as pywikibot
-
-# from spellcheck_hunspell import HunspellSpellchecker
+import marshal
 from wikispell.HunspellSpellchecker import HunspellSpellchecker
 
 level           =     form.getvalue( 'level')
@@ -169,17 +168,13 @@ if form.has_key('random') or form.has_key('start'):
 
   pages = []
   for i, page in enumerate(gen):
-      # if i >= 100: break
       if i >= 60: break
-      # if i >= 180: break
-      # if i > 10: break
-      # print "go for page", page
       pages.append(page)
 
 
 else:
-  title           =     form.getvalue( 'title')
-  title           =     title.decode("utf8")
+  title = form.getvalue( 'title')
+  title = title.decode("utf8")
   site = pywikibot.getSite(language, "wikipedia")
   page = pywikibot.Page(site, title)
   pages = [page]
@@ -189,23 +184,16 @@ remove_dissim   =    True
 if form.has_key('keepSugg') and form.getvalue( 'keepSugg') == "yes":
     remove_dissim   =    False
 
-
 if language == "de":
     
     hunspell_lang = "DE"
-    # hunspell_lang = "GER"
 
-    dictionary = "/usr/share/hunspell/de_DE"
     dictionary = "/data/project/hroest/data/de_DE_frami_nhr"
-    # dictionary = "/usr/share/hunspell/de_DE_frami"
     common_words_dict = set([])
     if sel_stringent == "Very":
-        # common_words_file = "/data/project/hroest/data/allgerman.pickle"
-        # import cPickle as pickle;
-        # common_words_dict = pickle.load(f); 
+
         common_words_file = "/data/project/hroest/data/allgerman.msh"
         f = open(common_words_file); 
-        import marshal
         common_words_dict = marshal.load(f); 
 
         ### Reading from text:
@@ -236,7 +224,6 @@ if language == "de":
     elif sel_stringent == "Medium":
         # marshal.dump ( common_words_dict, open( '/data/project/hroest/data/alltitles.msh' , 'w') )
 
-        import marshal
         common_words_file = "/data/project/hroest/data/alltitles.msh"
         f = open(common_words_file); 
         common_words_dict = marshal.load(f); 
@@ -260,7 +247,7 @@ elif language == "en":
     common_words_dict = set([])
     if sel_stringent == "Very":
         # marshal.dump ( common_words_dict, open( '/data/project/hroest/data/eng_strict.msh' , 'w') )
-        import marshal
+
         common_words_file = "/data/project/hroest/data/eng_strict.msh"
         f = open(common_words_file); 
         common_words_dict = marshal.load(f); 
@@ -278,7 +265,7 @@ elif language == "en":
 
     elif sel_stringent == "Medium":
         # marshal.dump ( common_words_dict, open( '/data/project/hroest/data/eng_titles.msh' , 'w') )
-        import marshal
+
         common_words_file = "/data/project/hroest/data/eng_titles.msh"
         f = open(common_words_file); 
         common_words_dict = marshal.load(f); 
