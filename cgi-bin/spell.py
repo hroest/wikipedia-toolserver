@@ -173,6 +173,7 @@ if form.has_key('random') or form.has_key('start'):
 
 
 else:
+  # We got a title, only check a single page
   title = form.getvalue( 'title')
   title = title.decode("utf8")
   site = pywikibot.getSite(language, "wikipedia")
@@ -207,19 +208,6 @@ if language == "de":
         ### f = open("/home/hroest_admin/pywiki/spellcheck/output_en.txt")
         ### for i,l in enumerate(f):
         ###     common_words_dict.add(l.strip().decode("utf8").lower())
-        ### # f = open("../spellcheck/lists/de/cbbnomcgdf-17166212131-e9u79o.txt")
-        ### f = open("/home/hroest_admin/pywiki/spellcheck/lists/de/cbbnomcgdf-17166212131-e9u79o.txt")
-        ### for i,l in enumerate(f):
-        ###     german = l.split("\t")[0]
-        ###     german = german.split("{")[0].strip()
-        ###     german = german.split("[")[0].strip()
-        ###     # comment
-        ###     if german.startswith("#"): continue
-        ###     # full phrases
-        ###     if german.startswith('"'): continue
-        ###     gwords = [g.replace("(", "").replace(")", "").decode("utf8").lower() for g in german.split()]
-        ###     # update ...
-        ###     common_words_dict.update(gwords)
 
     elif sel_stringent == "Medium":
         # marshal.dump ( common_words_dict, open( '/data/project/hroest/data/alltitles.msh' , 'w') )
@@ -286,10 +274,14 @@ elif sel_stringent == "Loose":
     # No composite words
     # No heuristics
     # No check for common words
+    #  -> this is spellcheck in hard mode ...
     composite_minlen = 4
     stringent = 1999
 
 
+##
+#### Perform spellcheck
+##
 sp = HunspellSpellchecker(hunspell_dict = dictionary, 
                        minimal_word_size=4, 
                        common_words=common_words_dict,  
@@ -297,10 +289,6 @@ sp = HunspellSpellchecker(hunspell_dict = dictionary,
                        composite_minlen = composite_minlen,
                        remove_dissimilar = remove_dissim,
                        language = hunspell_lang)
-
-## end = time.time()
-## timediff = end - start
-## print "This query took %s seconds. <br/>" % timediff
 
 if len(pages) > 0:
     print "I will spellcheck %s page(s), starting with: %s" % ( len(pages), pages[0].title().encode("utf8") )
@@ -336,6 +324,10 @@ for pagenr, page in enumerate(pages):
     print "<p>"
     print "Found %s words" % len(wrongWords)
     print "</p>"
+
+    ##
+    #### Print words for a single site
+    ##
     print "<ul>"
     for w in wrongWords:
         i = cnt
@@ -378,6 +370,9 @@ for pagenr, page in enumerate(pages):
 
 
 
+##
+#### Javascript to open all / close all snippets
+##
 print "<script type='text/javascript'>"
 
 print "function openAll () {\n"
