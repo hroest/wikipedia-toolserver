@@ -7,7 +7,7 @@ import MySQLdb
 import cgitb; cgitb.enable()
 
 import sys
-sys.path.append( '/data/project/hroest2/meta' )
+sys.path.append( '/data/project/hroest/meta' )
 import replag_lib
 import general_lib
 start = time.time()
@@ -45,8 +45,11 @@ timestamps = revlag_obj.timestamps
 print "<table > <tr>" 
 print"<td valign='top'>"
 
-
+###################################
+# Retrieve parameters from databse
+###################################
 plotted_lines = False
+pic_file  = None
 if form.has_key('hist'):
     try:
         hours = int( form.getvalue('hist') )
@@ -57,19 +60,23 @@ if form.has_key('hist'):
         h = float( form.getvalue('h') )
         if h > 0:
             my1Hist = replag_lib.create_hist_from_timestamps( timestamps, 1)
-            replag_lib.create_plot_kernel( my1Hist , 'hist' , 
+            pic_file = replag_lib.create_plot_kernel( my1Hist , 'hist' , 
                           "Rueckstand in Stunden", h = h )
         else:
             myXHist = replag_lib.create_hist_from_timestamps( timestamps, hours )
-            replag_lib.create_plot( myXHist , 'hist' , 
+            pic_file = replag_lib.create_plot( myXHist , 'hist' , 
                xlabel="Rueckstand in Stunden / %s" % hours )
     else:
         myXHist = replag_lib.create_hist_from_timestamps( timestamps, hours )
-        replag_lib.create_plot( myXHist , 'hist' , 
+        pic_file = replag_lib.create_plot( myXHist , 'hist' , 
                   xlabel= "Rueckstand in Stunden / %s" % hours )
 else:
-    replag_lib.create_plot( myHist, plot_lines=True )
+    pic_file = replag_lib.create_plot( myHist, plot_lines=True )
     plotted_lines = True
+
+
+if pic_file is not None:
+    print "<img src=\"%s\">" % pic_file
 
 
 print "</td>"
@@ -119,7 +126,7 @@ else:
 print "<br/>"* 5
 print "Du magst die Graphiken nicht, willst selber was einstellen? Hier gehts zum <a href='../flagged_lag.html'>Formular</a>  "
 print "<br/>"* 3
-print '<p> <a href="http://toolserver.org/~hroest/">Zurück zur Übersicht</a> </p>'
+print '<p> <a href="/hroest/">Zurück zur Übersicht</a> </p>'
  
 
 end = time.time()
