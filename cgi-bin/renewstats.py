@@ -3,20 +3,22 @@
 import cgitb; cgitb.enable()
 import datetime, time
 import sys, os
-sys.path.append( '/home/hroest' )
-sys.path.append( '/data/project/hroest2/' )
-sys.path.append( '/data/project/hroest2/meta' )
-sys.path.append( '/data/project/hroest2/bot/pywikibot-compat/' )
+sys.path.append( '/data/project/hroest/' )
+sys.path.append( '/data/project/hroest/meta' )
+# sys.path.append( '/data/project/hroest/bot/pywikibot-compat/' )
+sys.path.append( '/data/project/hroest/bot/pywikibot/' )
 import optinHash
 import general_lib
 import ReviewBotLib as h_lib_api
+import ReviewBotLib
 import wikipedia
 site = wikipedia.getSite()
 import cgi
 form = cgi.FieldStorage()   # FieldStorage object to
+
 import MySQLdb
-db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
-optinhashfile = '/home/hroest/optinHash.py'
+db = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.mysql_host)
+optinhashfile = '/data/project/hroest/optinHash.py'
 optin_page = 'Benutzer:HRoestBot/Nachsichten/SichterOptIn'
 
 
