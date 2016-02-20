@@ -67,6 +67,7 @@ print """
 import sys
 # sys.path.append("/home/hroest_admin/pywiki/pywikibot-spellchecker/")
 sys.path.append( '/data/project/hroest/bot/pywikibot-spell/' )
+sys.path.append( '/data/project/hroest/bot/wikispell/' )
 sys.path.append( '/data/project/hroest/pyhunspell/build/lib.linux-x86_64-2.7' )
 sys.path.append( '/data/project/hroest/levenshtein/python-Levenshtein-0.12.0/build/lib.linux-x86_64-2.7' )
 
@@ -141,8 +142,8 @@ if not form.has_key('title') and not ( form.has_key('random') or form.has_key('s
 
 import wikipedia as pywikibot
 
-from spellcheck import SpecialTerm, distance, getalternatives, cap, uncap
-from spellcheck_hunspell import HunspellSpellchecker
+# from spellcheck_hunspell import HunspellSpellchecker
+from wikispell.HunspellSpellchecker import HunspellSpellchecker
 
 level           =     form.getvalue( 'level')
 language        =     form.getvalue( 'language')
