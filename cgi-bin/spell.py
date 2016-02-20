@@ -33,6 +33,18 @@ helptext = """
   replace per page at a time (otherwise you overwrite your previous change). If
   you have more than one change, use the "edit" link.
   </p>
+  <p>
+  Q: Where is the source code?
+  </p>
+  <p>
+  A: Its on github: <a href="https://github.com/hroest/wikipedia-toolserver">the  CGI script<a/>, <a href="https://github.com/hroest/wikispell"> the spellchcker<a/> and the <a href="https://github.com/hroest/wikipedia-toolserver-meta">other scripts<a/>
+  </p>
+  <p>
+  Q: Where can I get help?
+  </p>
+  <p>
+  A: Try <a href="https://en.wikipedia.org/wiki/User_talk:Hannes_R%C3%B6st">my userpage on Wikipedia</a>.
+  </p>
 </div>
 <p>
   <a href="https://tools.wmflabs.org/hroest/">Go back</a>
