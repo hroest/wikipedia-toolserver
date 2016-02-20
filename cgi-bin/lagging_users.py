@@ -15,8 +15,7 @@
 #
 import cgitb; cgitb.enable()
 import MySQLdb, sys
-sys.path.append( '/home/hroest' )
-sys.path.append( '/data/project/hroest2/meta' )
+sys.path.append( '/data/project/hroest/meta' )
 import db_api
 import general_lib
 from general_lib import database_name as myDB

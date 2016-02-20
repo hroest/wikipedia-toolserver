@@ -6,7 +6,8 @@ import datetime
 import time 
 import inequality
 import sys
-sys.path.append( '/data/project/hroest2/' )
+sys.path.append( '/data/project/hroest/' )
+sys.path.append( '/data/project/hroest/meta' )
 import optinHash
 gnuplot_path = 'gnuplot'
 
@@ -482,11 +483,7 @@ print """
 
  <hr>
 
- <p>
- Für schöne Graphiken zum Replication Lag etc, siehe auch
- <a href="http://toolserver.org/~dapete/markstat/">hier</a>
- </p>
- <p> <a href="http://toolserver.org/~hroest/">Zurück zur Übersicht</a> </p>
+ <p> <a href="/hroest/">Zurück zur Übersicht</a> </p>
 """
 print "Letzte Aktualisierung der Daten (GMT/UTC):", latest_act
 f.close()
@@ -504,18 +501,19 @@ extra_stuff =  """
      -- month<br/>
      -- year<br/>
 
-     Some nice extra <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=5&year=2010&specialCategory=schweiz">http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=5&year=2010&specialCategory=schweiz</a>
-     <br> <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=-100&year=-100">All time</a>
-     <br> <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=-100&year=2009">All of 2009</a>
-     <br> <a href="http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=-100&year=2010">All of 2010</a>
-    
     </small>"""
 print "<br/>" * 4
 print "<br/>" * 20
 print extra_stuff
 
-now = datetime.datetime.now()
-now_unix = time.mktime( now.timetuple()  )  
-f = open( '/home/hroest/nachsichten.log', 'a')
-f.write( "%s, %s\n" % (str(int(now_unix) ), str( now)  ) )
-f.close()
+#Some nice extra <a href="/hroest/cgi-bin/nachsichten.py?&month=5&year=2010&specialCategory=schweiz">http://toolserver.org/~hroest/cgi-bin/nachsichten.py?&month=5&year=2010&specialCategory=schweiz</a>
+#      <br> <a href="/hroest/cgi-bin/nachsichten.py?&month=-100&year=-100">All time</a>
+#      <br> <a href="/hroest/cgi-bin/nachsichten.py?&month=-100&year=2009">All of 2009</a>
+#      <br> <a href="/hroest/cgi-bin/nachsichten.py?&month=-100&year=2010">All of 2010</a>
+
+# now = datetime.datetime.now()
+# now_unix = time.mktime( now.timetuple()  )  
+# f = open( '/home/hroest/nachsichten.log', 'a')
+# f.write( "%s, %s\n" % (str(int(now_unix) ), str( now)  ) )
+# f.close()
+
