@@ -31,7 +31,7 @@ print
 
 myform = """
 <p>
-Wenn du deinen Wikipedia-Benutzernamen <a href="http://de.wikipedia.org/wiki/Benutzer:HRoestBot/Nachsichten/SichterOptIn">hier</a>
+Wenn du deinen Wikipedia-Benutzernamen <a href="https://de.wikipedia.org/wiki/Benutzer:HRoestBot/Nachsichten/SichterOptIn">hier</a>
 eingetragen hast, kannst du deinen Wikipedia-Benutzernamen in das untenstehende 
 Formular eintragen und du erhaeltst sofort ein Update deiner Sichterbeitraege
 und Sichtertabelle auf deiner Benutzerseite. Beachte, dass eine
@@ -50,7 +50,7 @@ Beachte auch, dass nur eine Abfrage pro Zeit laufen kann.
 print myform
 
 if not form.has_key('user_name'): 
-    print '<hr> <p> <a href="http://toolserver.org/~hroest/">Zurück zur Übersicht</a> </p>'
+    print '<hr> <p> <a href="https://tools.wmflabs.org/hroest/">Zurück zur Übersicht</a> </p>'
     exit()
 user = form.getvalue( 'user_name' )
 
