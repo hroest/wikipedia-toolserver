@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8  -*-
 
+
 def escape(html):
     """Returns the given HTML with ampersands, quotes and carets encoded."""
     return html.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#39;')
@@ -308,9 +309,13 @@ if len(pages) > 0:
 cnt = 0
 for pagenr, page in enumerate(pages):
 
-    title = page.title()
-    text = page.get()
-    text, wrongWords_unfiltered = sp.spellcheck(text, level=level)
+    try:
+        title = page.title()
+        text = page.get()
+        text, wrongWords_unfiltered = sp.spellcheck(text, level=level)
+    except pywikibot.IsRedirectPage:
+        print "Page %s is a redirect page" % (title)
+        exit()
 
     wrongWords = []
     for w in wrongWords_unfiltered:
