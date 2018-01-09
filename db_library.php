@@ -15,7 +15,7 @@ function set_up_db( $language, $project = 'wiki' ) {
     //global $mysql_con;
     //TODO instead of wiki use $project
     //$mycnf = parse_ini_file("/home/".get_current_user()."/.my.cnf");
-    $mycnf = parse_ini_file("/data/project/hroest2/replica.my.cnf");
+    $mycnf = parse_ini_file("/data/project/hroest/replica.my.cnf");
     //$server = $language.'wiki-p.db.toolserver.org';
     $server = $language.'wiki.labsdb';
     if( !$mysql_con = mysql_connect($server, $mycnf['user'], $mycnf['password'])) {
