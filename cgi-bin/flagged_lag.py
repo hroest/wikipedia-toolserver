@@ -7,7 +7,7 @@ import MySQLdb
 import cgitb; cgitb.enable()
 
 import sys
-sys.path.append( '/data/project/hroest2/meta' )
+sys.path.append( '/data/project/hroest/meta' )
 import replag_lib
 import general_lib
 start = time.time()
@@ -18,6 +18,7 @@ print
 
 try:
     db = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.mysql_host)
+    db_user = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.userdatabase_host)
 except Exception:
     print  "Currently there is no new data available. <br/>"
     print  "This is due to the toolserver being overloaded.<br/>"
@@ -29,24 +30,27 @@ except Exception:
 default_days = 7 
 
 #myHist, timestamps, query_time = replag_lib.execute_unreviewed_changes_query(db)
-
 #median = timestamps[ len(timestamps) / 2 ]
 #P75 = timestamps[ len(timestamps) * 1 / 4 ]
 #P95 = timestamps[ len(timestamps) * 1 / 20 ]
 #mean = sum(timestamps) / len( timestamps )
 
-revlag_obj = replag_lib.execute_unreviewed_changes_query_fromCache(db)
+revlag_obj = replag_lib.execute_unreviewed_changes_query_fromCache(db_user)
 myHist = revlag_obj.myHist
-revlag_obj.get_extended(db)
+revlag_obj.get_extended(db_user)
 timestamps = revlag_obj.timestamps
+
 #my3Hist = replag_lib.create_hist_from_timestamps( timestamps, 3)
 #my1Hist = replag_lib.create_hist_from_timestamps( timestamps, 1)
 
 print "<table > <tr>" 
 print"<td valign='top'>"
 
-
+###################################
+# Retrieve parameters from databse
+###################################
 plotted_lines = False
+pic_file  = None
 if form.has_key('hist'):
     try:
         hours = int( form.getvalue('hist') )
@@ -57,19 +61,24 @@ if form.has_key('hist'):
         h = float( form.getvalue('h') )
         if h > 0:
             my1Hist = replag_lib.create_hist_from_timestamps( timestamps, 1)
-            replag_lib.create_plot_kernel( my1Hist , 'hist' , 
+            pic_file = replag_lib.create_plot_kernel( my1Hist , 'hist' , 
                           "Rueckstand in Stunden", h = h )
         else:
             myXHist = replag_lib.create_hist_from_timestamps( timestamps, hours )
-            replag_lib.create_plot( myXHist , 'hist' , 
+            pic_file = replag_lib.create_plot( myXHist , 'hist' , 
                xlabel="Rueckstand in Stunden / %s" % hours )
     else:
         myXHist = replag_lib.create_hist_from_timestamps( timestamps, hours )
-        replag_lib.create_plot( myXHist , 'hist' , 
+        pic_file = replag_lib.create_plot( myXHist , 'hist' , 
                   xlabel= "Rueckstand in Stunden / %s" % hours )
 else:
-    replag_lib.create_plot( myHist, plot_lines=True )
+    # Make default plot using the aggregate data (not the raw data)
+    pic_file = replag_lib.create_plot( myHist, plot_lines=True )
     plotted_lines = True
+
+
+if pic_file is not None:
+    print "<img src=\"%s\">" % pic_file
 
 
 print "</td>"
@@ -101,25 +110,25 @@ print " </tr> </table>"
 
 if form.has_key('hist_day'):
     days = float( form.getvalue('hist_day') )
-    if days < 0: cursor = replag_lib.revlag_color_cursor_all(db)
-    else: cursor = replag_lib.revlag_color_cursor_lastseconds(db, days * 24 * 3600)
+    if days < 0: cursor = replag_lib.revlag_color_cursor_all(db_user)
+    else: cursor = replag_lib.revlag_color_cursor_lastseconds(db_user, days * 24 * 3600)
     replag_lib.revlag_color_plot(cursor, 'history')
 else:
     if form.has_key('history_month') and form.has_key('history_year'):
         month = int( form.getvalue('history_month') )
         year = int( form.getvalue('history_year') )
         print "<br/><p>Verteilung des Alters fuer den Monat %s des Jahres %s</p>" % (month, year)
-        cursor = replag_lib.revlag_color_cursor_month(db, year, month )
+        cursor = replag_lib.revlag_color_cursor_month(db_user, year, month )
         replag_lib.revlag_color_plot(cursor, 'one_month_only')
     else:
-        cursor = replag_lib.revlag_color_cursor_lastseconds(db, default_days* 24 * 3600)
+        cursor = replag_lib.revlag_color_cursor_lastseconds(db_user, default_days* 24 * 3600)
         replag_lib.revlag_color_plot(cursor, 'history')
 
 
 print "<br/>"* 5
 print "Du magst die Graphiken nicht, willst selber was einstellen? Hier gehts zum <a href='../flagged_lag.html'>Formular</a>  "
 print "<br/>"* 3
-print '<p> <a href="http://toolserver.org/~hroest/">Zurück zur Übersicht</a> </p>'
+print '<p> <a href="/hroest/">Zurück zur Übersicht</a> </p>'
  
 
 end = time.time()

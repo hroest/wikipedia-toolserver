@@ -3,16 +3,24 @@
 import cgitb; cgitb.enable()
 import MySQLdb, sys
 sys.path.append( '/home/hroest' )
+sys.path.append( '/data/project/hroest/meta' )
 import db_api
+import general_lib
 import time, datetime
 print "Content-type: text/html; charset=utf-8"
 print ""
 
-db = MySQLdb.connect(read_default_file="/home/hroest/.my.cnf")
+try:
+    db = MySQLdb.connect(read_default_file=general_lib.mysql_config_file, host=general_lib.mysql_host)
+except Exception:
+    print  "Connection to DB failed..."
+    exit()
+
+
 all = """
-select page_title, updated_at, rev_timestamp from u_hroest.never_review 
+select page_title, updated_at, rev_timestamp from %s.never_review 
 order by rev_timestamp
-"""
+""" %  general_lib.database_name
 c  = db.cursor()
 
 c.execute( all )

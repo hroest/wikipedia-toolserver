@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8  -*-
 
+
 def escape(html):
     """Returns the given HTML with ampersands, quotes and carets encoded."""
     return html.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace("'", '&#39;')
@@ -32,6 +33,18 @@ helptext = """
   them (e.g. using Alt-Shift-S). However, be careful: you can only do one
   replace per page at a time (otherwise you overwrite your previous change). If
   you have more than one change, use the "edit" link.
+  </p>
+  <p>
+  Q: Where is the source code?
+  </p>
+  <p>
+  A: Its on github: <a href="https://github.com/hroest/wikipedia-toolserver">the  CGI script<a/>, <a href="https://github.com/hroest/wikispell"> the spellchcker<a/> and the <a href="https://github.com/hroest/wikipedia-toolserver-meta">other scripts<a/>
+  </p>
+  <p>
+  Q: Where can I get help?
+  </p>
+  <p>
+  A: Try <a href="https://en.wikipedia.org/wiki/User_talk:Hannes_R%C3%B6st">my userpage on Wikipedia</a>.
   </p>
 </div>
 <p>
@@ -296,9 +309,13 @@ if len(pages) > 0:
 cnt = 0
 for pagenr, page in enumerate(pages):
 
-    title = page.title()
-    text = page.get()
-    text, wrongWords_unfiltered = sp.spellcheck(text, level=level)
+    try:
+        title = page.title()
+        text = page.get()
+        text, wrongWords_unfiltered = sp.spellcheck(text, level=level)
+    except pywikibot.IsRedirectPage:
+        print "Page %s is a redirect page" % (title)
+        exit()
 
     wrongWords = []
     for w in wrongWords_unfiltered:

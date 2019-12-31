@@ -105,20 +105,22 @@ function db_get_articles_in_category ( $language , $category , $depth = 0 ,
     $no_redirects = false , $limit = '' , $project = 'wikipedia' , 
     $only_redirects = false ) {
 
-    //print $done_cats[0] . $done_cats[1] . $category . "<br/>";
-    if (false) {
-    if ($category == 'Militärischer_Verband_(Schweiz)' ) {
-        print 'dfd';
-    }
-    if ($category == 'Fernsehen_(Schweiz)' ) {
-        print $category;
-        print $exclude[2] . '<br/>';
-        print $exclude[3] . '<br/>';
-    }
-    if ( in_array ( $category , $exclude ) ) print "excluding $category";
-    }
+    // //print $done_cats[0] . $done_cats[1] . $category . "<br/>";
+    // if (false) {
+    // if ($category == 'Militärischer_Verband_(Schweiz)' ) {
+    //     print 'dfd';
+    // }
+    // if ($category == 'Fernsehen_(Schweiz)' ) {
+    //     print $category;
+    //     print $exclude[2] . '<br/>';
+    //     print $exclude[3] . '<br/>';
+    // }
+    // if ( in_array ( $category , $exclude ) ) print "excluding $category";
+    // }
+
     if ( in_array ( $category , $done_cats ) )  return array () ;
     if ( in_array ( $category , $exclude ) )  return array () ;
+
     $mysql_con = db_get_con_new($language,$project) ;
     //$db = get_db_name ( $language , $project ) ;
     $db = $language . 'wiki_p' ;
@@ -130,6 +132,7 @@ function db_get_articles_in_category ( $language , $category , $depth = 0 ,
     $subcats = array () ;
     $red = $no_redirects ? ' AND page_is_redirect=0' : '' ;
     if ( $only_redirects ) $red = ' AND page_is_redirect=1' ;
+
     $sql = "SELECT page_title,page_namespace FROM page,categorylinks 
         WHERE page_id=cl_from AND cl_to=\"{$category}\" $red $limit" ;
 //  print "TESTING : $depth - $category : $sql<br/>" ;
@@ -140,10 +143,10 @@ function db_get_articles_in_category ( $language , $category , $depth = 0 ,
         if ( !isset ( $o->page_namespace ) ) continue ;
         if ( $o->page_namespace == 14 AND ($depth > 0 OR $depth < -99)  ) {
             $subcats[] = $o->page_title ;
-            if ( $namespace >= 0 and $o->page_namespace != $namespace ) continue ;
         } else if ( $namespace >= 0 and $o->page_namespace != $namespace ) continue ;
+        if ($namespace >= 0 and $o->page_namespace != $namespace ) continue;
         if (in_array( $o->page_title, $exclude ) ) continue;
-        if ( substr($o->page_title, 0, 11) == 'Grasshopper') print $category;
+        // if ( substr($o->page_title, 0, 11) == 'Grasshopper') print $category;
         $ret[$o->page_title] = $o->page_title ;
 //      print "TESTING : $depth - $category / " . $o->page_title . "<br/>" ;
     }
